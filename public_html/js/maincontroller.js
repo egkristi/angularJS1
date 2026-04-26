@@ -1,4 +1,4 @@
-app.controller("MainController", function($scope){
+app.controller("MainController", ["$scope", function($scope) {
     $scope.understand = "Dette er i scope...!.!";
     $scope.inputValue = "";
     $scope.selectedPerson = null;
@@ -7,64 +7,49 @@ app.controller("MainController", function($scope){
         {
             id: 0,
             name: 'Per',
-            language: [
-                'Java',
-                'HTML5',
-                'HTML4',
-                'BASH'
-            ],
-            male: true,
+            language: ['Java', 'HTML5', 'HTML4', 'BASH'],
             live: true
         },
         {
             id: 1,
             name: 'Hilde',
-            language: [
-                'C++',
-                'C#',
-                'HTML4',
-                'BASH'
-            ],
-            male: false,
+            language: ['C++', 'C#', 'HTML4', 'BASH'],
             live: true
         },
         {
             id: 2,
             name: 'Christian',
-            language: [
-                'Java',
-                'HTML5',
-                'Javascript',
-                'cgi-script'
-            ],
-            male: true,
+            language: ['Java', 'HTML5', 'Javascript', 'CGI'],
             live: false
         },
         {
             id: 3,
             name: 'Helge',
-            language: [
-                'KSH',
-                'Powershell',
-                'J#'
-            ],
-            male: true,
+            language: ['KSH', 'Powershell', 'J#'],
             live: true
         }
     ];
-    $scope.newPerson = null;
-    $scope.newLang = null;
+    $scope.newPerson = "";
+    $scope.newLang = "";
     $scope.addNew = function() {
-        if ($scope.newPerson != null && $scope.newPerson != "" && $scope.newLang != null && $scope.newLang != "") {
+        if ($scope.newPerson && $scope.newLang) {
             $scope.people.push({
                 id: $scope.people.length,
                 name: $scope.newPerson,
-                male: true,
                 live: true,
                 language: [$scope.newLang]
             });
-            $scope.newPerson = null;
-            $scope.newLang = null;
+            $scope.newPerson = "";
+            $scope.newLang = "";
         }
     };
-});
+    $scope.formatLanguages = function(langs) {
+        return langs.join(", ");
+    };
+    $scope.removePerson = function(person) {
+        var idx = $scope.people.indexOf(person);
+        if (idx !== -1) {
+            $scope.people.splice(idx, 1);
+        }
+    };
+}]);
