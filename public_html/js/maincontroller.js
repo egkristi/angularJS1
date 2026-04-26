@@ -1,8 +1,8 @@
 app.controller("MainController", function($scope){
     $scope.understand = "Dette er i scope...!.!";
     $scope.inputValue = "";
-    $scope.selectedPerson = 0;
-	$scope.selectedGenre = null;
+    $scope.selectedPerson = null;
+    $scope.selectedLanguage = null;
     $scope.people = [
         {
             id: 0,
@@ -13,7 +13,8 @@ app.controller("MainController", function($scope){
                 'HTML4',
                 'BASH'
             ],
-            male: true
+            male: true,
+            live: true
         },
         {
             id: 1,
@@ -24,7 +25,8 @@ app.controller("MainController", function($scope){
                 'HTML4',
                 'BASH'
             ],
-            male: false
+            male: false,
+            live: true
         },
         {
             id: 2,
@@ -35,7 +37,8 @@ app.controller("MainController", function($scope){
                 'Javascript',
                 'cgi-script'
             ],
-            male: true
+            male: true,
+            live: false
         },
         {
             id: 3,
@@ -45,7 +48,8 @@ app.controller("MainController", function($scope){
                 'Powershell',
                 'J#'
             ],
-            male: true
+            male: true,
+            live: true
         }
     ];
     $scope.newPerson = null;
@@ -56,8 +60,11 @@ app.controller("MainController", function($scope){
                 id: $scope.people.length,
                 name: $scope.newPerson,
                 male: true,
+                live: true,
                 language: [$scope.newLang]
             });
+            $scope.newPerson = null;
+            $scope.newLang = null;
         }
     };
 });
