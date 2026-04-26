@@ -11,76 +11,91 @@
 </head>
 <body>
     <div id="content" ng-controller="MainController">
-        <h1>Learning AngularJS</h1>
+        <h1>Learning AngularJS <small>with GitHub API</small></h1>
 
-        <div class="section">
-            <h3>1. Data Binding</h3>
-            <p>Scope-variabel: <span class="output-value">{{understand}}</span></p>
+        <div class="loading-state" ng-show="loading">
+            <p>Loading GitHub users...</p>
+        </div>
+        <div class="error-state" ng-show="error">
+            <p>{{error}}</p>
         </div>
 
-        <div class="section">
-            <h3>2. Two-Way Binding</h3>
-            <input type="text" ng-model="inputValue" placeholder="Skriv noe...">
-            <p>Du skrev: <span class="output-value">{{inputValue}}</span></p>
-        </div>
-
-        <div class="section">
-            <h3>3. Select (cascading)</h3>
-            <select ng-model="selectedPerson" ng-options="obj.name for obj in people">
-                <option value="">-- Velg person --</option>
-            </select>
-            <select ng-model="selectedLanguage" ng-show="selectedPerson" ng-options="lang for lang in selectedPerson.language">
-                <option value="">-- Velg språk --</option>
-            </select>
-            <p ng-show="selectedPerson && selectedLanguage">
-                <strong>{{selectedPerson.name}}</strong> kan <span class="output-value">{{selectedLanguage}}</span>
-            </p>
-        </div>
-
-        <div class="section">
-            <h3>4. Search (filter)</h3>
-            <input type="text" ng-model="searchText1" placeholder="Søk...">
-            <ul>
-                <li ng-repeat="person in people | filter:searchText1">#{{person.id}} {{person.name}}</li>
-            </ul>
-            <p class="empty-state" ng-show="(people | filter:searchText1).length === 0">Ingen treff.</p>
-        </div>
-
-        <div class="section">
-            <h3>5. ng-show / ng-hide</h3>
-            <p>Viser alle – aktive i grønt, inaktive i grått:</p>
-            <ul>
-                <li ng-repeat="person in people" class="person-row">
-                    <span>
-                        <span ng-show="person.live" class="live">#{{person.id}} {{person.name}} (aktiv)</span>
-                        <span ng-hide="person.live" class="not-live">#{{person.id}} {{person.name}} (inaktiv)</span>
-                    </span>
-                    <button class="btn-danger" ng-click="removePerson(person)">Fjern</button>
-                </li>
-            </ul>
-            <p class="empty-state" ng-show="people.length === 0">Ingen personer. Legg til noen nedenfor!</p>
-        </div>
-
-        <div class="section">
-            <h3>6. Events (add/filter)</h3>
-            <input type="text" ng-model="searchText2" placeholder="Filtrer aktive...">
-            <ul>
-                <li ng-repeat="person in people | filter:searchText2" ng-show="person.live">
-                    <strong>#{{person.id}} {{person.name}}</strong> –
-                    <span class="badge" ng-repeat="lang in person.language">{{lang}}</span>
-                </li>
-            </ul>
-            <p class="empty-state" ng-show="(people | filter:searchText2).length === 0">Ingen treff.</p>
-            <br>
-            <div class="form-group">
-                <label>Navn:</label>
-                <input type="text" ng-model="newPerson" placeholder="Ola Nordmann">
+        <div ng-hide="loading">
+            <div class="section">
+                <h3>1. Data Binding</h3>
+                <p>Scope-variabel: <span class="output-value">{{understand}}</span></p>
             </div>
-            <div class="form-group">
-                <label>Språk:</label>
-                <input type="text" ng-model="newLang" placeholder="Python">
+
+            <div class="section">
+                <h3>2. Two-Way Binding</h3>
+                <input type="text" ng-model="inputValue" placeholder="Skriv noe...">
+                <p>Du skrev: <span class="output-value">{{inputValue}}</span></p>
             </div>
-            <button ng-click="addNew()">Legg til</button>
+
+            <div class="section">
+                <h3>3. Select (cascading)</h3>
+                <select ng-model="selectedPerson" ng-options="obj.name for obj in people">
+                    <option value="">-- Velg bruker --</option>
+                </select>
+                <select ng-model="selectedLanguage" ng-show="selectedPerson" ng-options="lang for lang in selectedPerson.language">
+                    <option value="">-- Velg språk --</option>
+                </select>
+                <p ng-show="selectedPerson && selectedLanguage">
+                    <img ng-src="{{selectedPerson.avatar}}" class="avatar-small" alt="">
+                    <strong>{{selectedPerson.name}}</strong> bruker <span class="output-value">{{selectedLanguage}}</span>
+                </p>
+            </div>
+
+            <div class="section">
+                <h3>4. Search (filter)</h3>
+                <input type="text" ng-model="searchText1" placeholder="Søk GitHub-brukere...">
+                <ul>
+                    <li ng-repeat="person in people | filter:searchText1">
+                        <img ng-src="{{person.avatar}}" class="avatar-tiny" alt="" ng-show="person.avatar">
+                        #{{person.id}} {{person.name}}
+                    </li>
+                </ul>
+                <p class="empty-state" ng-show="(people | filter:searchText1).length === 0">Ingen treff.</p>
+            </div>
+
+            <div class="section">
+                <h3>5. ng-show / ng-hide</h3>
+                <p>Aktive (har repos) i grønt, inaktive i grått:</p>
+                <ul>
+                    <li ng-repeat="person in people" class="person-row">
+                        <span>
+                            <img ng-src="{{person.avatar}}" class="avatar-tiny" alt="" ng-show="person.avatar">
+                            <span ng-show="person.live" class="live">{{person.name}} ({{person.repos}} repos)</span>
+                            <span ng-hide="person.live" class="not-live">{{person.name}} (inaktiv)</span>
+                        </span>
+                        <button class="btn-danger" ng-click="removePerson(person)">Fjern</button>
+                    </li>
+                </ul>
+                <p class="empty-state" ng-show="people.length === 0">Ingen brukere. Legg til noen nedenfor!</p>
+            </div>
+
+            <div class="section">
+                <h3>6. Events (add/filter)</h3>
+                <input type="text" ng-model="searchText2" placeholder="Filtrer aktive brukere...">
+                <ul>
+                    <li ng-repeat="person in people | filter:searchText2" ng-show="person.live">
+                        <img ng-src="{{person.avatar}}" class="avatar-tiny" alt="" ng-show="person.avatar">
+                        <strong>{{person.name}}</strong> –
+                        <span class="badge" ng-repeat="lang in person.language">{{lang}}</span>
+                    </li>
+                </ul>
+                <p class="empty-state" ng-show="(people | filter:searchText2).length === 0">Ingen treff.</p>
+                <br>
+                <div class="form-group">
+                    <label>Navn:</label>
+                    <input type="text" ng-model="newPerson" placeholder="brukernavn">
+                </div>
+                <div class="form-group">
+                    <label>Språk:</label>
+                    <input type="text" ng-model="newLang" placeholder="Python">
+                </div>
+                <button ng-click="addNew()">Legg til</button>
+            </div>
         </div>
     </div>
 </body>
